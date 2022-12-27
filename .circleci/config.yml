@@ -10,8 +10,10 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            # Your code here
-            exit 1
+            aws cloudformation delete-stack \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" 
+            aws cloudformation deploy \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"  
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -141,6 +143,39 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-analyze
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"   
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            # Your code here
+            exit 1
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
+      - destroy:
+          destroy_environment:
+            when: on_fail
 
 workflows:
   default:
@@ -159,4 +194,10 @@ workflows:
       - scan-backend:
           requires : 
             - build-backend
+      - deploy-infrastructure:
+          requires:
+            - test-backend
+            - test-frontend
+            - scan-backend
+            - scan-frontend
       
