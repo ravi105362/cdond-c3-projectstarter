@@ -70,7 +70,8 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure      
+      # Here's where you will add some code to rollback on failure 
+      
   test-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -87,6 +88,7 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-test
+          
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -109,7 +111,7 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-      - test-frontend:
-        requries: [build-frontend]
-      - test-backend:
-        requires: [build-backend]
+      - test-frontend :
+        requries : [build-frontend]
+      - test-backend :
+        requires : [build-backend]
