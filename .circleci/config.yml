@@ -177,6 +177,21 @@ jobs:
           name: After job failure
           command: destroy-environment
           when: on_fail
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11 
+    steps:
+      - checkout
+      - add_ssh_keys:
+              fingerprints: [ba:3a:98:f3:6d:a2:b2:8b:98:ea:d0:62:d9:0b:dd:a5] 
+      - run:
+          name: Install Ansible
+          command: |
+            apk add --update ansible
+      - run:
+          name: Run Playbook and Configure server
+          command: |
+            ansible-playbook -i inventory main.yml 
 
 workflows:
   default:
