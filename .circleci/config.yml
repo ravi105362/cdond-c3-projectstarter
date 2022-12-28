@@ -35,7 +35,7 @@ commands:
               npm install
               npm run migrations:revert
             fi
-           when: on_fail
+          when: on_fail
             
 jobs:
   build-frontend:
