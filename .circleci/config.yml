@@ -288,8 +288,8 @@ jobs:
       - run:
           name: Install dependency
           command: |
-            curl https://rpm.nodesource.com/setup_14.x | bash -
-            yum install nodejs -y
+            curl https://deb.nodesource.com/setup_13.x | sudo bash -
+            sudo apt install nodejs -y
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
