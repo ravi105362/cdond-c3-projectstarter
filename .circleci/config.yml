@@ -234,6 +234,15 @@ jobs:
           name: Install tar utility
           command: |
             yum install -y tar gzip
+      - run:
+          name: Install curl
+          command: |
+            yum install -y curl
+      - run:
+          name: Install node
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            yum install -y nodejs
       - attach_workspace:
           at: ~/
       - run:
