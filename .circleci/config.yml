@@ -241,8 +241,8 @@ jobs:
       - run:
           name: Install node
           command: |
-            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-            yum install -y nodejs
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+            nvm install 13.8.0
       - attach_workspace:
           at: ~/
       - run:
