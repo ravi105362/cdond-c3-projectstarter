@@ -7,12 +7,16 @@ commands:
       # Add parameter here   
     steps:
       - run:
-          name: Destroy environments
+          name: Destroy environment backend
           when: on_fail
           command: |
             aws cloudformation delete-stack \
-              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" 
-            aws cloudformation deploy \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+      - run:
+          name: Destroy environment frontend
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"  
 
   revert-migrations:
@@ -174,10 +178,8 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - run:
-          name: After job failure
-          command: destroy-environment
-          when: on_fail
+      - run: destroy-environment
+            
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11 
