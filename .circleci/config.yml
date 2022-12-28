@@ -258,7 +258,7 @@ jobs:
 
   deploy-backend:
     docker:
-      # Docker image here that supports Ansible
+      - image: amazon/aws-cli
     steps:
       # Checkout code from git
       # Add ssh keys with fingerprint
