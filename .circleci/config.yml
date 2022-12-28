@@ -230,12 +230,19 @@ jobs:
     
     steps:
       - checkout
+      - run:
+          name: Install tar utility
+          command: |
+            yum install -y tar gzip
       - attach_workspace:
           at: ~/
       - run:
           name: Install dependencies
           command: |
-            npm install
+            yum install -y python
+            yum install -y ansible
+            yum install -y node
+            yum install -y npm
       - run:
           name: Get backend url
           command: |
