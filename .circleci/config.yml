@@ -193,9 +193,21 @@ jobs:
           command: |
             apk add --update ansible
       - run:
+          name: Install tar
+          command: |
+            apk add --update tar
+      - run:
+          name: Install gzip
+          command: |
+            apk add --update gzip
+      - run:
+          name: Install awscli
+          command: |
+            apk add --update awscli
+      - run:
           name: Run Playbook and Configure server
           command: |
-            ansible-playbook -i project/.circleci/ansible/inventory.txt main.yml
+            ansible-playbook -i project/.circleci/ansible/inventory.txt configure-server.yml
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
@@ -244,4 +256,7 @@ workflows:
             - test-frontend
             - scan-backend
             - scan-frontend
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
       
