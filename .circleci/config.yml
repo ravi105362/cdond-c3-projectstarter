@@ -203,7 +203,7 @@ jobs:
       - run:
           name: Run Playbook and Configure server
           command: |
-            ansible-playbook -i project/.circleci/ansible/inventory.txt configure-server.yml
+            ansible-playbook -i project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
