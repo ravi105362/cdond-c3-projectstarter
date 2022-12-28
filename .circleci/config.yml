@@ -186,6 +186,8 @@ jobs:
       - checkout
       - add_ssh_keys:
               fingerprints: [ba:3a:98:f3:6d:a2:b2:8b:98:ea:d0:62:d9:0b:dd:a5] 
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install Ansible
           command: |
@@ -193,7 +195,7 @@ jobs:
       - run:
           name: Run Playbook and Configure server
           command: |
-            ansible-playbook -i inventory main.yml
+            ansible-playbook -i project/.circleci/ansible/inventory.txt main.yml
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
