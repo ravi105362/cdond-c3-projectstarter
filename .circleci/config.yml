@@ -29,12 +29,13 @@ commands:
           # Add when this will run
           command: |
             SUCCESS = curl --insecure https://kvdb.io/WMo6X3FwpWFsEvsEt8o7vq/migration_${CIRCLE_WORKFLOW_ID:0:7}
-            if(( $SUCCESS!=1 )); 
+            if(( $SUCCESS=="1" )); 
             then
               cd ~/project/backend
               npm install
-              migrations:revert
+              npm run migrations:revert
             fi
+           when: on_fail
             
 jobs:
   build-frontend:
@@ -264,7 +265,8 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - destroy-environment      
+      - destroy-environment
+      - revert-migrations
 
   deploy-backend:
     docker:
@@ -273,16 +275,9 @@ jobs:
       - checkout
       - add_ssh_keys:
               fingerprints: [ba:3a:98:f3:6d:a2:b2:8b:98:ea:d0:62:d9:0b:dd:a5]
-      - run:
-          name: Install tar utility
-          command: |
-            yum install -y tar gzip
+      
       - attach_workspace:
           at: ~/
-      - run:
-          name: Install curl
-          command: |
-            yum install -y curl
       - run:
           name: Install dependency
           command: |
@@ -309,7 +304,8 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat ~/project/.circleci/ansible/inventory.txt
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
-      - destroy-environment    
+      - destroy-environment
+      - revert-migrations
      
 
 workflows:
@@ -338,9 +334,9 @@ workflows:
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
-#       - run-migrations:
-#           requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       - deploy-frontend:
-          requires: [configure-infrastructure]
+          requires: [run-migrations]
       - deploy-backend:
-          requires: [configure-infrastructure]
+          requires: [run-migrations]
