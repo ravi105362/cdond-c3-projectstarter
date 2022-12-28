@@ -72,11 +72,6 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure 
       
   test-frontend:
     docker:
@@ -173,11 +168,11 @@ jobs:
           command: |
             aws ec2 describe-instances \
                --query 'Reservations[*].Instances[*].PublicIpAddress' \
-               --output text >> cdond-c3-projectstarter/.circleci/ansible/inventory.txt
+               --output text >> .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - cdond-c3-projectstarter/.circleci/ansible/inventory.txt
+            - .circleci/ansible/inventory.txt
       - destroy-environment
             
   configure-infrastructure:
