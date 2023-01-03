@@ -29,7 +29,7 @@ commands:
           # Add when this will run
           command: |
             SUCCESS=$(curl --insecure https://kvdb.io/WMo6X3FwpWFsEvsEt8o7vq/migration_${CIRCLE_WORKFLOW_ID:0:7})
-            if(( $SUCCESS=="1" )); 
+            if(( $SUCCESS == "1" )); 
             then
               cd ~/project/backend
               npm install
@@ -386,9 +386,9 @@ workflows:
             - deploy-infrastructure
       - run-migrations:
           requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [configure-infrastructure]
-      - deploy-backend:
-          requires: [configure-infrastructure]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+      # - deploy-frontend:
+      #     requires: [configure-infrastructure]
+      # - deploy-backend:
+      #     requires: [configure-infrastructure]
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
