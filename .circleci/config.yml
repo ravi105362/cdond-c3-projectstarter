@@ -434,11 +434,11 @@ workflows:
           requires:
             - build-backend
       - deploy-infrastructure
-        # requires:
-        #   - test-backend
-        #   - test-frontend
-        #   - scan-backend
-        #   - scan-frontend
+        requires:
+          - test-backend
+          - test-frontend
+          - scan-backend
+          - scan-frontend
         filters:
             branches:
               only:
