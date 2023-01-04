@@ -374,10 +374,20 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            yum install tar gzip -y
+            curl https://deb.nodesource.com/setup_14.x | sudo bash -
+            yum install nodejs -y
+            node --version
+            npm --version
       - run:
           name: Update cloudfront distribution
           command: |
+            # get the old workflow id
+            OldWorkflowID=$(aws cloudformation list-exports \
+            --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text)
+            echo $OldWorkflowID
+
             # Change the initial stack name, as applicable to you
             aws cloudformation deploy \
                   --template-file .circleci/files/cloudfront.yml \
