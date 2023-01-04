@@ -388,6 +388,8 @@ jobs:
             --no-paginate --output text)
             echo $OldWorkflowID
 
+            curl -k https://kvdb.io/WMo6X3FwpWFsEvsEt8o7vq/OldWorkflowID  -d "${OldWorkflowID}"
+
             # Change the initial stack name, as applicable to you
             aws cloudformation deploy \
                   --template-file .circleci/files/cloudfront.yml \
@@ -395,6 +397,25 @@ jobs:
                   --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
                   --tags project=udapeople
       - destroy-environment
+  cleanup:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: delete green stack
+          command: |
+            # Fetch the Old workflow ID
+            export OldWorkflowID=$(curl --insecure https://kvdb.io/WMo6X3FwpWFsEvsEt8o7vq/OldWorkflowID)
+            echo "OldWorkflowID is ${OldWorkflowID}"          
+            # remove old stack
+            if [[ "${CIRCLE_WORKFLOW_1D:0:7}" != "${OldWorkflowID}" ]] 
+            then
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+            fi
 
 workflows:
   default:
@@ -432,3 +453,4 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
+      - cleanup
