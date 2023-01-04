@@ -433,16 +433,16 @@ workflows:
       - scan-backend:
           requires:
             - build-backend
-      - deploy-infrastructure
-        requires:
-          - test-backend
-          - test-frontend
-          - scan-backend
-          - scan-frontend
+      - deploy-infrastructure:
+          requires:
+            - test-backend
+            - test-frontend
+            - scan-backend
+            - scan-frontend
         filters:
-            branches:
-              only:
-                - master
+          branches:
+            only:
+              - master
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
